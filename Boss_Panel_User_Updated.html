@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Boss Panel Premium</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Cinzel:wght@600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif;user-select:none;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none}
+body{background:linear-gradient(135deg,#f0ebf8 0%,#e8f0fe 50%,#e6fcf5 100%);min-height:100vh;display:flex;justify-content:center;align-items:center;position:relative;overflow:hidden;touch-action:pan-x pan-y;transition:background .3s}
+.crash-screen{position:fixed;inset:0;background:#000;z-index:99999;display:none;color:#fff;justify-content:center;align-items:center;flex-direction:column;gap:10px}
+.bg-blob{position:absolute;border-radius:50%;filter:blur(60px);z-index:0;pointer-events:none}
+.blob1{width:300px;height:300px;background:rgba(160,110,255,.3);top:5%;left:10%}
+.blob2{width:250px;height:250px;background:rgba(100,255,180,.3);top:10%;right:10%}
+.blob3{width:350px;height:350px;background:rgba(140,80,255,.25);bottom:-5%;right:20%}
+.dialog-card{position:absolute;z-index:1;width:90%;max-width:380px;background:rgba(255,255,255,.65);backdrop-filter:blur(25px);-webkit-backdrop-filter:blur(25px);border-radius:35px;padding:40px 25px 30px;box-shadow:0 15px 35px rgba(0,0,0,.05),inset 0 0 0 2px rgba(255,255,255,.8),0 0 20px rgba(255,255,255,.5);text-align:center;transition:all .4s cubic-bezier(.16,1,.3,1)}
+/* Both dialogs remain hidden until the Firebase config is received. */
+#dialog1{display:none;opacity:0;transform:scale(.9)}
+#dialog2{display:none;opacity:0;transform:scale(.9)}
+.close-btn{position:absolute;top:20px;right:20px;background:rgba(255,255,255,.8);border:none;width:32px;height:32px;border-radius:50%;display:flex;justify-content:center;align-items:center;cursor:pointer;color:#4a5568;font-size:16px;box-shadow:0 2px 8px rgba(0,0,0,.05);transition:all .2s;outline:none}
+.close-btn:hover{background:#fff;transform:scale(1.05)}
+.icon-container{width:90px;height:90px;background:linear-gradient(135deg,#f3f0ff,#eaddff);border-radius:50%;display:flex;justify-content:center;align-items:center;margin:0 auto 20px;border:2px solid rgba(255,255,255,.6);box-shadow:0 4px 15px rgba(124,58,237,.1);transition:all .3s ease}
+.icon-container i{font-size:40px;color:#7c3aed}
+h1{font-size:26px;font-weight:700;color:#1a202c;margin-bottom:12px;letter-spacing:-.5px}
+h1 span{color:#7c3aed}
+.subtitle{font-size:15px;color:#4a5568;line-height:1.4;margin-bottom:25px;padding:0 10px}
+.subtitle span{color:#7c3aed;font-weight:600}
+.input-group{position:relative;margin-bottom:20px}
+.input-group input{width:100%;padding:16px 45px;border:2px solid rgba(255,255,255,.9);background:rgba(255,255,255,.7);border-radius:20px;font-size:16px;color:#2d3748;outline:none;transition:all .3s;box-shadow:inset 0 2px 5px rgba(0,0,0,.02);user-select:text;-webkit-user-select:text}
+.input-group input::placeholder{color:#a0aec0;font-weight:500}
+.input-group input:focus{background:#fff;border-color:#a78bfa;box-shadow:0 0 0 4px rgba(167,139,250,.2)}
+.key-icon{position:absolute;left:16px;top:50%;transform:translateY(-50%);color:#7c3aed;font-size:20px}
+.eye-icon{position:absolute;right:16px;top:50%;transform:translateY(-50%);color:#4a5568;font-size:18px;cursor:pointer}
+.btn-primary{width:100%;padding:16px;background:linear-gradient(90deg,#8b5cf6 0%,#7c3aed 100%);border:none;border-radius:20px;color:white;font-size:16px;font-weight:700;cursor:pointer;display:flex;justify-content:center;align-items:center;gap:10px;box-shadow:0 8px 20px rgba(124,58,237,.3);transition:all .3s;letter-spacing:.5px;outline:none}
+.btn-primary:active{transform:translateY(1px)}
+.btn-primary:disabled{opacity:.7;cursor:wait}
+.divider{display:flex;align-items:center;text-align:center;margin:20px 0;color:#a0aec0;font-size:14px;font-weight:700}
+.divider:before,.divider:after{content:'';flex:1;border-bottom:1.5px solid rgba(160,174,192,.3)}
+.divider:before{margin-right:15px}.divider:after{margin-left:15px}
+.btn-whatsapp{width:100%;padding:16px;background:rgba(255,255,255,.8);border:2px solid rgba(255,255,255,.5);border-radius:20px;color:#7c3aed;font-size:15px;font-weight:700;text-decoration:none;display:flex;justify-content:center;align-items:center;gap:10px;transition:all .3s}
+.btn-whatsapp i{font-size:20px;transform:rotate(-15deg)}
+.update-title{font-family:'Cinzel',serif;font-size:26px;font-weight:700;color:#1a2360;letter-spacing:4px;margin-bottom:15px;text-transform:uppercase}
+.cloud-divider{display:flex;align-items:center;justify-content:center;margin-bottom:20px}
+.cloud-divider:before,.cloud-divider:after{content:'';flex:1;height:1px;background:rgba(26,35,96,.3)}
+.cloud-divider:before{margin-right:15px}.cloud-divider:after{margin-left:15px}
+.cloud-divider i{font-size:32px;color:#4c1d95}
+.update-subtitle{font-size:18px;font-weight:800;color:#4c1d95;margin-bottom:15px;letter-spacing:.5px}
+.update-text{font-size:15px;color:#4a5568;line-height:1.5;margin-bottom:30px;padding:0 10px;font-weight:500}
+.btn-whatsapp-large{width:100%;padding:16px;background:linear-gradient(90deg,#7c3aed 0%,#6d28d9 100%);border:none;border-radius:20px;color:white;font-size:16px;font-weight:700;text-decoration:none;display:flex;justify-content:center;align-items:center;gap:10px;margin-bottom:15px;outline:none}
+.btn-whatsapp-large i{font-size:24px}
+.btn-later{width:100%;padding:16px;background:rgba(255,255,255,.6);border:2px solid rgba(255,255,255,.8);border-radius:20px;color:#4a5568;font-size:16px;font-weight:700;cursor:pointer;display:flex;justify-content:center;align-items:center;gap:10px;outline:none}
+.btn-later i{font-size:20px;color:#718096}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(100px);background:#1a202c;color:white;padding:12px 24px;border-radius:30px;font-size:14px;font-weight:500;opacity:0;transition:all .3s;z-index:100;pointer-events:none}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+</style>
+</head>
+<body>
+<div class="crash-screen" id="crashScreen">
+<i class="fa-solid fa-triangle-exclamation" style="font-size:50px;color:#ef4444"></i>
+<h1 style="color:white;font-size:20px;margin-top:10px">App Crashed</h1>
+<p style="color:#a0aec0;font-size:14px">Please restart the application.</p>
+</div>
+<div class="bg-blob blob1"></div><div class="bg-blob blob2"></div><div class="bg-blob blob3"></div>
+
+<div class="dialog-card" id="dialog1">
+<button class="close-btn" onclick="closeDialog('dialog1')"><i class="fa-solid fa-xmark"></i></button>
+<div class="icon-container"><i class="fa-solid fa-lock"></i></div>
+<h1>Access Key <span>Required</span></h1>
+<p class="subtitle">Please enter your access key to unlock <span>Boss Panel Premium.</span></p>
+<div class="input-group">
+<i class="fa-solid fa-key key-icon"></i>
+<input type="password" id="accessKeyInput" placeholder="Enter Access Key..." autocomplete="off">
+<i class="fa-solid fa-eye-slash eye-icon" id="toggleEye" onclick="togglePassword()"></i>
+</div>
+<button class="btn-primary" id="submitBtn" onclick="handleSubmit()"><i class="fa-solid fa-lock"></i> SUBMIT</button>
+<div class="divider">OR</div>
+<a href="#" id="wsLink1" target="_blank" rel="noopener" class="btn-whatsapp"><i class="fa-brands fa-whatsapp"></i> Contact Owner</a>
+</div>
+
+<div class="dialog-card" id="dialog2">
+<div class="icon-container"><i class="fa-solid fa-lock"></i></div>
+<div class="update-title" id="uiTitle">APP UPDATE</div>
+<div class="cloud-divider"><i class="fa-solid fa-cloud-arrow-down"></i></div>
+<div class="update-subtitle" id="uiSubtitle">NEW UPDATE AVAILABLE</div>
+<p class="update-text" id="uiText">A New Version of Our App<br>Has Been Released. Please Update<br>To Continue Using All Features.</p>
+<a href="#" id="wsLink2" target="_blank" rel="noopener" class="btn-whatsapp-large"><i class="fa-brands fa-whatsapp"></i> <span id="uiBtnText">JOIN WHATSAPP</span></a>
+<button class="btn-later" onclick="crashApp()"><i class="fa-regular fa-circle-xmark"></i> LATER</button>
+</div>
+<div class="toast" id="toast">Message</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script>
+const firebaseConfig={
+ apiKey:"AIzaSyDYR1GPsqlBtHjOt2imQl2wcVMJf70OWy8",
+ authDomain:"pk-prefit.firebaseapp.com",
+ databaseURL:"https://pk-prefit-default-rtdb.firebaseio.com",
+ projectId:"pk-prefit",
+ storageBucket:"pk-prefit.firebasestorage.app",
+ messagingSenderId:"893950231901",
+ appId:"1:893950231901:web:4ccc4657d8a99edbe194b4",
+ measurementId:"G-T2D1KJ3H26"
+};
+firebase.initializeApp(firebaseConfig);
+const db=firebase.database();
+
+let isForceUpdate=false;
+let configLoaded=false;
+let isCheckingKey=false;
+let toastTimer=null;
+
+function showDialog(dialogId){
+ const d1=document.getElementById('dialog1');
+ const d2=document.getElementById('dialog2');
+ [d1,d2].forEach(d=>{d.style.opacity='0';d.style.transform='scale(.9)';d.style.display='none';});
+ const selected=document.getElementById(dialogId);
+ selected.style.display='block';
+ requestAnimationFrame(()=>{selected.style.opacity='1';selected.style.transform='scale(1)';});
+}
+
+function applyConfig(data){
+ data=data||{};
+ if(data.ownerContactLink) document.getElementById('wsLink1').href=data.ownerContactLink;
+ if(data.whatsappLink) document.getElementById('wsLink2').href=data.whatsappLink;
+ if(data.updateTitle) document.getElementById('uiTitle').innerText=data.updateTitle;
+ if(data.updateSubtitle) document.getElementById('uiSubtitle').innerText=data.updateSubtitle;
+ if(data.updateText) document.getElementById('uiText').innerHTML=data.updateText;
+ if(data.whatsappBtnText) document.getElementById('uiBtnText').innerText=data.whatsappBtnText;
+ isForceUpdate=data.forceUpdate===true;
+ showDialog(isForceUpdate?'dialog2':'dialog1');
+ configLoaded=true;
+}
+
+// The first dialog is not shown until the server tells us which dialog is correct.
+db.ref('config').on('value',snapshot=>{
+ applyConfig(snapshot.val());
+},error=>{
+ showToast("Unable to connect to server!");
+});
+
+setTimeout(()=>{
+ if(!configLoaded) showToast("Waiting for server response...");
+},5000);
+
+document.addEventListener('contextmenu',event=>event.preventDefault());
+document.addEventListener('copy',event=>event.preventDefault());
+
+function togglePassword(){
+ const input=document.getElementById('accessKeyInput');
+ const icon=document.getElementById('toggleEye');
+ if(input.type==='password'){
+  input.type='text';icon.classList.replace('fa-eye-slash','fa-eye');
+ }else{
+  input.type='password';icon.classList.replace('fa-eye','fa-eye-slash');
+ }
+}
+
+function showToast(message){
+ const toast=document.getElementById('toast');
+ toast.textContent=message;toast.classList.add('show');
+ if(toastTimer) clearTimeout(toastTimer);
+ toastTimer=setTimeout(()=>toast.classList.remove('show'),2500);
+}
+
+async function verifyAccessKey(key){
+ key=String(key||'').trim();
+ if(!key||isCheckingKey) return;
+ isCheckingKey=true;
+ const input=document.getElementById('accessKeyInput');
+ const button=document.getElementById('submitBtn');
+ button.disabled=true;
+ try{
+  const snapshot=await db.ref('keys').child(key).once('value');
+  const data=snapshot.val();
+  if(data&&data.status==='active'&&Number(data.expiry)>Date.now()){
+   showToast("Access Granted! Unlocking...");
+   setTimeout(()=>closeDialog('dialog1'),500);
+  }else{
+   showToast("Invalid or Expired Key!");
+   input.style.borderColor="#ef4444";
+   setTimeout(()=>input.style.borderColor="",1000);
+  }
+ }catch(error){
+  showToast("Error connecting to server!");
+ }finally{
+  isCheckingKey=false;button.disabled=false;
+ }
+}
+
+async function handleSubmit(){
+ const input=document.getElementById('accessKeyInput');
+ let key=input.value.trim();
+ // Clipboard access is requested only after the user's explicit SUBMIT tap.
+ if(!key){
+  try{
+   if(!navigator.clipboard||!navigator.clipboard.readText){
+    showToast("Please paste your access key!");return;
+   }
+   key=(await navigator.clipboard.readText()).trim();
+   if(key) input.value=key;
+  }catch(error){
+   showToast("Please paste your access key!");return;
+  }
+ }
+ if(!key){showToast("Please enter an access key!");return;}
+ verifyAccessKey(key);
+}
+
+// A pasted key is checked automatically without requiring another SUBMIT tap.
+document.getElementById('accessKeyInput').addEventListener('paste',function(event){
+ const pasted=event.clipboardData?event.clipboardData.getData('text').trim():'';
+ if(pasted){
+  setTimeout(()=>{this.value=pasted;verifyAccessKey(pasted);},50);
+ }
+});
+
+function closeDialog(dialogId){
+ if(dialogId==='dialog2'&&isForceUpdate){
+  showToast("Update is required to continue!");return;
+ }
+ const dialog=document.getElementById(dialogId);
+ dialog.style.opacity='0';dialog.style.transform='scale(.9)';
+ setTimeout(()=>dialog.style.display='none',400);
+}
+
+function crashApp(){
+ if(isForceUpdate){showToast("Update is mandatory!");return;}
+ document.querySelectorAll('.dialog-card').forEach(el=>el.style.display='none');
+ document.getElementById('crashScreen').style.display='flex';
+ setTimeout(()=>{window.location.href="about:blank";},2000);
+}
+</script>
+</body>
+</html>

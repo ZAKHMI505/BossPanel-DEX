@@ -1,0 +1,11 @@
+Boss Panel Premium Dialog HOOK
+
+Target APK package: com.galaxycrash.app
+Target class: smali/com/galaxycrash/app/MainActivity.smali
+Method: onCreate(Landroid/os/Bundle;)V
+
+Paste this line immediately AFTER the invoke-super ...->onCreate(Landroid/os/Bundle;)V line:
+
+invoke-static {p0}, Lcom/bosspanel/dialog/BossPanelDialog;->show(Landroid/app/Activity;)V
+
+Add classes2.dex to the APK root. Do not replace the original classes.dex.
