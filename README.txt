@@ -1,24 +1,28 @@
-BOSS PANEL PREMIUM - EXACT HTML DEX BUILD KIT
+BOSS PANEL - TRANSPARENT DIALOG OVERLAY DEX BUILD KIT
 
-BossPanel.html is copied verbatim from the HTML supplied in the conversation.
-No HTML/CSS/JavaScript edits are applied by the build scripts. scripts/embed_html.py
-Base64-embeds those exact bytes into the Java WebView wrapper at build time.
+This revision keeps the supplied Boss Panel dialog card styling/content and removes
+the full-page pastel background and decorative background blobs. The Android app
+behind the dialog remains visible through the transparent WebView/Dialog window.
 
-ONE COMMAND (after extracting this ZIP in Termux):
-  bash one-command.sh
+Behavior:
+- Access-key dialog is shown as an overlay above the existing app.
+- Closing the access dialog dismisses the native overlay so the host app is usable.
+- If Firebase config enables forceUpdate, the update dialog is shown.
+- Tapping LATER safely dismisses the overlay and closes the host app task (returns
+  to the launcher/home screen). It does not deliberately crash the process.
 
-Before running, create an EMPTY GitHub repository and enable Actions. The script
-asks for its HTTPS URL and a GitHub Personal Access Token with repository write
-permission. It pushes the project; GitHub Actions compiles the Java wrapper with
-Android D8 and produces an artifact ZIP containing ONLY:
+The HTML is embedded verbatim by scripts/embed_html.py after the two requested
+background/exit behavior changes. Other dialog styles, Firebase settings, and
+dialog content are retained.
+
+GitHub Actions builds classes2.dex and creates an artifact ZIP containing only:
   classes2.dex
   HOOK .txt
 
-Important:
-- This build kit is source/build automation; compiled DEX is produced by GitHub Actions.
-- Target package/MainActivity hook is based on inspection of GalaxyCrash_1.17.apk.
-- Original classes.dex is not modified.
-- Host app must have INTERNET permission for Firebase/CDN assets to load.
-- Test on a backup APK first. DEX insertion and signing are performed separately in MT Manager.
-- HTML behavior remains exactly as supplied; for example, the existing closeDialog/crashApp
-  JavaScript behavior is preserved as-is.
+For the existing Termux checkout, replace the project files with this kit, then:
+  git add .
+  git commit -m "Make Boss Panel dialog transparent overlay"
+  git push
+
+Open GitHub > Actions and download the Boss_Panel_Dialog_HOOK artifact after the
+workflow succeeds. This source kit itself is not a compiled DEX.

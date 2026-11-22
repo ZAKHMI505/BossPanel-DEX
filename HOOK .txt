@@ -1,4 +1,4 @@
-Boss Panel Premium Dialog HOOK
+Boss Panel Premium Transparent Dialog HOOK
 
 Target APK package: com.galaxycrash.app
 Target class: smali/com/galaxycrash/app/MainActivity.smali

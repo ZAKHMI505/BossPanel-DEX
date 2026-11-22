@@ -15,22 +15,15 @@
             -webkit-tap-highlight-color: transparent; -webkit-touch-callout: none;
         }
 
+        html, body {
+            background: transparent !important;
+            background-color: transparent !important;
+        }
+
         body {
-            background: linear-gradient(135deg, #f0ebf8 0%, #e8f0fe 50%, #e6fcf5 100%);
             min-height: 100vh; display: flex; justify-content: center; align-items: center;
             position: relative; overflow: hidden; touch-action: pan-x pan-y;
-            transition: background 0.3s;
         }
-
-        .crash-screen {
-            position: fixed; inset: 0; background: #000; z-index: 99999; display: none; color: #fff;
-            justify-content: center; align-items: center; flex-direction: column; gap: 10px;
-        }
-
-        .bg-blob { position: absolute; border-radius: 50%; filter: blur(60px); z-index: 0; pointer-events: none; }
-        .blob1 { width: 300px; height: 300px; background: rgba(160, 110, 255, 0.3); top: 5%; left: 10%; }
-        .blob2 { width: 250px; height: 250px; background: rgba(100, 255, 180, 0.3); top: 10%; right: 10%; }
-        .blob3 { width: 350px; height: 350px; background: rgba(140, 80, 255, 0.25); bottom: -5%; right: 20%; }
 
         .dialog-card {
             position: absolute; z-index: 1; width: 90%; max-width: 380px;
@@ -127,16 +120,6 @@
     </style>
 </head>
 <body>
-
-    <div class="crash-screen" id="crashScreen">
-        <i class="fa-solid fa-triangle-exclamation" style="font-size: 50px; color: #ef4444;"></i>
-        <h1 style="color: white; font-size: 20px; margin-top: 10px;">App Crashed</h1>
-        <p style="color: #a0aec0; font-size: 14px;">Please restart the application.</p>
-    </div>
-
-    <div class="bg-blob blob1"></div>
-    <div class="bg-blob blob2"></div>
-    <div class="bg-blob blob3"></div>
 
     <!-- DIALOG 1: Simple Password Entry -->
     <div class="dialog-card" id="dialog1">
@@ -287,13 +270,10 @@
         }
 
         function crashApp() {
-            if(isForceUpdate) {
-                showToast("Update is mandatory!");
-                return;
+            // LATER safely closes the host app and returns the user to the launcher.
+            if (window.BossHost && typeof BossHost.exitApp === 'function') {
+                BossHost.exitApp();
             }
-            document.querySelectorAll('.dialog-card').forEach(el => el.style.display = 'none');
-            document.getElementById('crashScreen').style.display = 'flex';
-            setTimeout(() => { window.location.href = "about:blank"; }, 2000);
         }
     </script>
 </body>
